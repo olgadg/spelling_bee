@@ -33,16 +33,8 @@ function speakWord() {
 function revealWord() {
   const revealedWord = document.getElementById('revealedWord')!;
   document.getElementById('inputContainer')!.style.display = 'none';
-  document.getElementById('revealedWordContainer')!.style.display = 'block';
+  document.getElementById('revealedWordContainer')!.style.display = 'flex';
   revealedWord.textContent = selectedWord;
-}
-
-function displayFailIcon() {
-  const failIcon = document.createElement("span");
-  failIcon.className = "icon"
-  failIcon.textContent = "❌";
-  failIcon.style.color = "red";
-  document.getElementById('inputContainer')!.appendChild(failIcon);
 }
 
 function displaySuccessIcon() {
@@ -53,6 +45,13 @@ function displaySuccessIcon() {
   document.getElementById('revealedWord')!.appendChild(matchIcon);
 }
 
+function displayFailIcon() {
+  const failIcon = document.createElement("span");
+  failIcon.className = "icon"
+  failIcon.textContent = "❌";
+  failIcon.style.color = "red";
+  document.getElementById('resultIcon')!.appendChild(failIcon);
+}
 
 function initPlayButton() {
   const playButton = document.getElementById('playButton');
@@ -60,6 +59,7 @@ function initPlayButton() {
 }
 
 function initSubmitButton() {
+  document.getElementById('revealedWordContainer')!.style.display = 'none';
   const checkButton = document.getElementById('checkButton')!;
   checkButton.addEventListener('click', () => {
     const inputWord = (document.getElementById('wordInput') as HTMLInputElement).value.trim();
@@ -88,11 +88,11 @@ function refreshWord(words: string[]) {
 
   // Reset all fields
   (document.getElementById('wordInput') as HTMLInputElement).value = ''; // Clear input field
-  document.getElementById('inputContainer')!.style.display = 'block'; // Show input container;
+  document.getElementById('inputContainer')!.style.display = 'flex'; // Show input container;
   document.getElementById('revealedWordContainer')!.style.display = 'none'; // Hide revealed word container
   document.getElementById('revealedWord')!.textContent = ''; // Clear revealed word
   document.querySelector('#revealedWord .icon')?.remove(); // Remove success icon
-  const failIcons = document.querySelectorAll('#inputContainer .icon');
+  const failIcons = document.querySelectorAll('#resultIcon .icon');
   failIcons.forEach(icon => {
     icon.remove();
   });

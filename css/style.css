@@ -8,44 +8,74 @@ body {
     justify-content: center;
     height: 100vh;
     background-color: #f0f0f0;
-  }
-  
-  .container {
+}
+
+.container {
     margin-bottom: 20px;
-  }
-  
-  .button {
+}
+
+.button {
     padding: 16px;
-    margin: 8px;
+    margin-top: 8px;
     font-size: 16px;
+    width: 200px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     background-color: #007bff;
     color: #fff;
     transition: background-color 0.3s ease;
-  }
-  
-  .button:hover {
+}
+
+p.button:hover {
     background-color: #0056b3;
-  }
-  
-  .input-container {
+}
+
+.input-container {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
-  }
-  
-  .input-field {
-    padding: 8px;
+}
+
+.input-field {
+    padding: 16px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-right: 10px;
-  }
-  
-  .icon {
+}
+
+.button-container {
+    display: block;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
+}
+
+.icon {
     margin-left: 10px;
     font-size: 24px;
-  }
-  
+}
+
+
+.full-width {
+    width: 200px;
+}
+
+.half-width {
+    width: 80px;
+}
+@media screen and (max-width: 600px) {
+
+    .input-container {
+        flex-direction: column;
+    }
+
+    .full-width {
+        width: 90vw;
+    }
+
+    .half-width {
+        width: 45vw;
+    }
+}
