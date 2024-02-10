@@ -9,20 +9,21 @@
 </head>
 
 <body>
-
     <div class="container">
         <!-- Button to listen to the word -->
-        <button class="button" id="playButton">Listen</button>
+        <button class="button full-width" id="playButton">Listen</button>
     </div>
 
     <div class="container input-container" id="inputContainer">
         <!-- Input field to enter a word for checking -->
-        <input type="text" id="wordInput" class="input-field" placeholder="Enter the word">
-        <button class="button" id="checkButton">Check</button>
-        <!-- Button to reveal the selected word -->
-        <button class="button" id="revealButton">Reveal</button>
+        <input type="text" id="wordInput" class="input-field full-width" spellcheck="false" autocorrect="off"
+            placeholder="Enter the word">
         <!-- Icon to display the result of word checking -->
         <span class="icon" id="resultIcon"></span>
+        <div class="button-container">
+            <button class="button half-width" id="checkButton">Check</button>
+            <button class="button  half-width" id="revealButton">Reveal</button>
+        </div>
     </div>
 
     <div id="revealedWordContainer" class="container">
@@ -31,7 +32,7 @@
 
     <div class="container">
         <!-- Button to refresh the page -->
-        <button class="button" id="refreshButton">New word</button>
+        <button class="button full-width" id="refreshButton">New word</button>
     </div>
 
     <script type="module" src="dist/script.js"></script>

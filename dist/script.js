@@ -79,15 +79,8 @@ function speakWord() {
 function revealWord() {
     var revealedWord = document.getElementById('revealedWord');
     document.getElementById('inputContainer').style.display = 'none';
-    document.getElementById('revealedWordContainer').style.display = 'block';
+    document.getElementById('revealedWordContainer').style.display = 'flex';
     revealedWord.textContent = selectedWord;
-}
-function displayFailIcon() {
-    var failIcon = document.createElement("span");
-    failIcon.className = "icon";
-    failIcon.textContent = "❌";
-    failIcon.style.color = "red";
-    document.getElementById('inputContainer').appendChild(failIcon);
 }
 function displaySuccessIcon() {
     var matchIcon = document.createElement("span");
@@ -96,11 +89,19 @@ function displaySuccessIcon() {
     matchIcon.style.color = "green";
     document.getElementById('revealedWord').appendChild(matchIcon);
 }
+function displayFailIcon() {
+    var failIcon = document.createElement("span");
+    failIcon.className = "icon";
+    failIcon.textContent = "❌";
+    failIcon.style.color = "red";
+    document.getElementById('resultIcon').appendChild(failIcon);
+}
 function initPlayButton() {
     var playButton = document.getElementById('playButton');
     playButton.addEventListener('click', function () { return speakWord(); });
 }
 function initSubmitButton() {
+    document.getElementById('revealedWordContainer').style.display = 'none';
     var checkButton = document.getElementById('checkButton');
     checkButton.addEventListener('click', function () {
         var inputWord = document.getElementById('wordInput').value.trim();
@@ -127,11 +128,11 @@ function refreshWord(words) {
     selectedWord = selectRandomWord(words);
     // Reset all fields
     document.getElementById('wordInput').value = ''; // Clear input field
-    document.getElementById('inputContainer').style.display = 'block'; // Show input container;
+    document.getElementById('inputContainer').style.display = 'flex'; // Show input container;
     document.getElementById('revealedWordContainer').style.display = 'none'; // Hide revealed word container
     document.getElementById('revealedWord').textContent = ''; // Clear revealed word
     (_a = document.querySelector('#revealedWord .icon')) === null || _a === void 0 ? void 0 : _a.remove(); // Remove success icon
-    var failIcons = document.querySelectorAll('#inputContainer .icon');
+    var failIcons = document.querySelectorAll('#resultIcon .icon');
     failIcons.forEach(function (icon) {
         icon.remove();
     });
