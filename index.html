@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Checker</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Button to listen to the word -->
+        <button class="button" id="playButton">Listen</button>
+    </div>
+
+    <div class="container input-container" id="inputContainer">
+        <!-- Input field to enter a word for checking -->
+        <input type="text" id="wordInput" class="input-field" placeholder="Enter the word">
+        <button class="button" id="checkButton">Check</button>
+        <!-- Button to reveal the selected word -->
+        <button class="button" id="revealButton">Reveal</button>
+        <!-- Icon to display the result of word checking -->
+        <span class="icon" id="resultIcon"></span>
+    </div>
+
+    <div id="revealedWordContainer" class="container">
+        <p id="revealedWord"></p>
+    </div>
+
+    <div class="container">
+        <!-- Button to refresh the page -->
+        <button class="button" id="refreshButton">New word</button>
+    </div>
+
+    <script type="module" src="dist/script.js"></script>
+</body>
+
+</html>
