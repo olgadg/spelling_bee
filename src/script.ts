@@ -59,10 +59,13 @@ function initPlayButton() {
 }
 
 function initSubmitButton() {
+  
   document.getElementById('revealedWordContainer')!.style.display = 'none';
+  const wordInput = (document.getElementById('wordInput') as HTMLInputElement);
+  wordInput.type = 'text';
   const checkButton = document.getElementById('checkButton')!;
   checkButton.addEventListener('click', () => {
-    const inputWord = (document.getElementById('wordInput') as HTMLInputElement).value.trim();
+    const inputWord = wordInput.value.trim();
     const success = inputWord.toLowerCase() === selectedWord.toLowerCase();
     if (success) {
       revealWord()

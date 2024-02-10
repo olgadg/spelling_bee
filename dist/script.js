@@ -102,9 +102,11 @@ function initPlayButton() {
 }
 function initSubmitButton() {
     document.getElementById('revealedWordContainer').style.display = 'none';
+    var wordInput = document.getElementById('wordInput');
+    wordInput.type = 'text';
     var checkButton = document.getElementById('checkButton');
     checkButton.addEventListener('click', function () {
-        var inputWord = document.getElementById('wordInput').value.trim();
+        var inputWord = wordInput.value.trim();
         var success = inputWord.toLowerCase() === selectedWord.toLowerCase();
         if (success) {
             revealWord();
