@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var selectedWord = "";
+var savedWords;
 // Function to fetch words from a file
 function fetchWordsFromFile() {
     return __awaiter(this, void 0, void 0, function () {
@@ -65,13 +66,50 @@ function fetchWordsFromFile() {
         });
     });
 }
+// Function to read the cookie and parse the word count map
+function readWordCountFromCookie() {
+    var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)wordCount\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    return cookieValue ? JSON.parse(decodeURIComponent(cookieValue)) : {};
+}
+// Function to save the word count map to the cookie
+function saveWordCountToCookie(wordCount) {
+    var cookieValue = encodeURIComponent(JSON.stringify(wordCount));
+    document.cookie = "wordCount=".concat(cookieValue, "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/");
+}
 // Function to randomly select a word from the list
 function selectRandomWord(words) {
     var randomIndex = Math.floor(Math.random() * words.length); // Generate a random index
     return words[randomIndex]; // Return the word at the randomly selected index
 }
+function selectWeightedRandomWord() {
+    // Convert word count map to an array of [word, count] pairs
+    var wordCountArray = Object.entries(savedWords);
+    // Calculate the maximum count
+    var maxCount = Math.max.apply(Math, wordCountArray.map(function (_a) {
+        var count = _a[1];
+        return count;
+    }));
+    // Calculate the total "inverse" count, where each word's inverse count is (maxCount - count + 1)
+    var totalInverseCount = wordCountArray.reduce(function (acc, _a) {
+        var count = _a[1];
+        return acc + (maxCount - count + 1);
+    }, 0);
+    // Generate a random number between 0 and total inverse count
+    var randomNumber = Math.random() * totalInverseCount;
+    // Iterate over word count array and accumulate inverse counts until the random number is reached
+    var cumulativeInverseCount = 0;
+    for (var _i = 0, wordCountArray_1 = wordCountArray; _i < wordCountArray_1.length; _i++) {
+        var _a = wordCountArray_1[_i], word = _a[0], count = _a[1];
+        cumulativeInverseCount += maxCount - count + 1;
+        if (randomNumber < cumulativeInverseCount) {
+            return word; // Return the word when the cumulative inverse count exceeds the random number
+        }
+    }
+    return "";
+}
 // Function to speak the word using Text-to-Speech
 function speakWord() {
+    console.log(selectedWord);
     var utterance = new SpeechSynthesisUtterance(selectedWord);
     utterance.lang = 'en-GB';
     speechSynthesis.speak(utterance);
@@ -109,6 +147,8 @@ function initSubmitButton() {
         var inputWord = wordInput.value.trim();
         var success = inputWord.toLowerCase() === selectedWord.toLowerCase();
         if (success) {
+            savedWords[inputWord] = (savedWords[inputWord] || 0) + 1;
+            saveWordCountToCookie(savedWords);
             revealWord();
             displaySuccessIcon();
         }
@@ -124,10 +164,10 @@ function initRevealButton() {
     });
 }
 // Function to refresh and select a new random word
-function refreshWord(words) {
+function refreshWord() {
     var _a;
     // Select a new random word
-    selectedWord = selectRandomWord(words);
+    selectedWord = selectWeightedRandomWord();
     // Reset all fields
     document.getElementById('wordInput').value = ''; // Clear input field
     document.getElementById('inputContainer').style.display = 'flex'; // Show input container;
@@ -140,10 +180,10 @@ function refreshWord(words) {
     });
 }
 // Function to initialize the refresh button
-function initRefreshButton(words) {
+function initRefreshButton() {
     var refreshButton = document.getElementById('refreshButton');
     refreshButton.addEventListener('click', function () {
-        refreshWord(words);
+        refreshWord();
     });
 }
 function init() {
@@ -156,11 +196,22 @@ function init() {
                     return [4 /*yield*/, fetchWordsFromFile()];
                 case 1:
                     words = _a.sent();
-                    selectedWord = selectRandomWord(words);
+                    savedWords = readWordCountFromCookie();
+                    console.log(savedWords);
+                    console.log(Object.keys(savedWords).length);
+                    if (Object.keys(savedWords).length == 0) {
+                        words.forEach(function (word) { return savedWords[word] = 0; });
+                        saveWordCountToCookie(savedWords);
+                    }
+                    console.log(savedWords);
+                    words.forEach(function (word) { return savedWords[word] = 100; });
+                    savedWords[words[0]] = 0;
+                    console.log(savedWords);
+                    selectedWord = selectWeightedRandomWord();
                     initPlayButton();
                     initSubmitButton();
                     initRevealButton();
-                    initRefreshButton(words);
+                    initRefreshButton();
                     return [3 /*break*/, 3];
                 case 2:
                     error_2 = _a.sent();

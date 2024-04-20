@@ -1,4 +1,7 @@
 var selectedWord = ""
+var savedWords :WordCountMap
+
+type WordCountMap = { [word: string]: number };
 
 // Function to fetch words from a file
 async function fetchWordsFromFile(): Promise<string[]> {
@@ -17,14 +20,45 @@ async function fetchWordsFromFile(): Promise<string[]> {
   }
 }
 
-// Function to randomly select a word from the list
-function selectRandomWord(words: string[]): string {
-  const randomIndex = Math.floor(Math.random() * words.length); // Generate a random index
-  return words[randomIndex]; // Return the word at the randomly selected index
+// Function to read the cookie and parse the word count map
+function readWordCountFromCookie(): WordCountMap {
+  const cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)wordCount\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+  return cookieValue ? JSON.parse(decodeURIComponent(cookieValue)) : {};
+}
+
+// Function to save the word count map to the cookie
+function saveWordCountToCookie(wordCount: WordCountMap) {
+  const cookieValue = encodeURIComponent(JSON.stringify(wordCount));
+  document.cookie = `wordCount=${cookieValue}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+}
+
+function selectWeightedRandomWord(): string {
+  // Convert word count map to an array of [word, count] pairs
+  const wordCountArray = Object.entries(savedWords);
+
+  // Calculate the maximum count
+  const maxCount = Math.max(...wordCountArray.map(([, count]) => count));
+
+  // Calculate the total "inverse" count, where each word's inverse count is (maxCount - count + 1)
+  const totalInverseCount = wordCountArray.reduce((acc, [, count]) => acc + (maxCount - count + 1), 0);
+
+  // Generate a random number between 0 and total inverse count
+  const randomNumber = Math.random() * totalInverseCount;
+
+  // Iterate over word count array and accumulate inverse counts until the random number is reached
+  let cumulativeInverseCount = 0;
+  for (const [word, count] of wordCountArray) {
+    cumulativeInverseCount += maxCount - count + 1;
+    if (randomNumber < cumulativeInverseCount) {
+      return word; // Return the word when the cumulative inverse count exceeds the random number
+    }
+  }
+  return ""
 }
 
 // Function to speak the word using Text-to-Speech
 function speakWord() {
+  console.log(selectedWord)
   const utterance = new SpeechSynthesisUtterance(selectedWord);
   utterance.lang = 'en-GB';
   speechSynthesis.speak(utterance);
@@ -68,6 +102,8 @@ function initSubmitButton() {
     const inputWord = wordInput.value.trim();
     const success = inputWord.toLowerCase() === selectedWord.toLowerCase();
     if (success) {
+      savedWords[inputWord] = (savedWords[inputWord] || 0) + 5;
+      saveWordCountToCookie(savedWords)
       revealWord()
       displaySuccessIcon()
     } else {
@@ -85,9 +121,9 @@ function initRevealButton() {
 }
 
 // Function to refresh and select a new random word
-function refreshWord(words: string[]) {
+function refreshWord() {
   // Select a new random word
-  selectedWord = selectRandomWord(words);
+  selectedWord = selectWeightedRandomWord();
 
   // Reset all fields
   (document.getElementById('wordInput') as HTMLInputElement).value = ''; // Clear input field
@@ -102,10 +138,10 @@ function refreshWord(words: string[]) {
 }
 
 // Function to initialize the refresh button
-function initRefreshButton(words: string[]): void {
+function initRefreshButton(): void {
   const refreshButton = document.getElementById('refreshButton');
   refreshButton!.addEventListener('click', () => {
-    refreshWord(words);
+    refreshWord();
   });
 }
 
@@ -113,12 +149,19 @@ function initRefreshButton(words: string[]): void {
 async function init(): Promise<void> {
   try {
     const words = await fetchWordsFromFile();
-    selectedWord = selectRandomWord(words);
+    savedWords = readWordCountFromCookie();
+    console.log(savedWords)
+    if(Object.keys(savedWords).length == 0) {
+      words.forEach(word => savedWords[word] = 0)
+      saveWordCountToCookie(savedWords)
+    }
+
+    selectedWord = selectWeightedRandomWord();
 
     initPlayButton();
     initSubmitButton();
     initRevealButton();
-    initRefreshButton(words);
+    initRefreshButton();
 
   } catch (error) {
     console.error('Error creating and checking word:', error);
