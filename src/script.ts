@@ -17,52 +17,10 @@ const createMapFromWords = () => {
   return wordsMap;
 };
 
-// Function to fetch words from a file
-// async function fetchWordsFromFile(): Promise<string[]> {
-//   try {
-//     const response = await fetch("/assets/wordlist"); // Fetch the file from the server
-//     if (!response.ok) {
-//       throw new Error("Failed to fetch words from file");
-//     }
-//     const text = await response.text(); // Get the file content as text
-//     const wordlist = text.split("\n").map((word) => word.trim()); // Split content by new lines and trim whitespace
-//     console.log("wordlist", wordlist);
-//     return wordlist;
-//   } catch (error) {
-//     console.error("Error fetching words:", error);
-//     return []; // Return an empty array in case of error
-//   }
-// }
-
-// Function to read the cookie and parse the word count map
-// function readWordCountFromCookie(): WordCountMap {
-//   const cookieValue = document.cookie.replace(
-//     /(?:(?:^|.*;\s*)wordCount\s*\=\s*([^;]*).*$)|^.*$/,
-//     "$1",
-//   );
-//   return cookieValue ? JSON.parse(decodeURIComponent(cookieValue)) : {};
-// }
-
-// Function to save the word count map to the cookie
-// function saveWordCountToCookie(wordCount: WordCountMap) {
-//   const cookieValue = encodeURIComponent(JSON.stringify(wordCount));
-//   document.cookie = `wordCount=${cookieValue}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
-// }
-
-// const weightedRandom = () => {
-//   const words1 = Array.from(savedWords, ([name, value]) => name);
-//   const weights = Array.from(savedWords, ([name, value]) => value);
-//   console.log(words1);
-//   console.log(weights);
-//   // const words = Array.from(savedWords, ([name, value]) => ({ name, value }));
-//   const totalWeight = weights.reduce((a, b) => a + b, 0);
-//   let random = Math.random() * totalWeight;
-//   return words1.find((_, i) => (random -= weights[i]) <= 0) || "";
-// };
-
-const invertedWeightedRandom = () => {
-  // Calculate the sum of inverse weights
+const selectWeightedRandomWord = () => {
+  // get an array from the map
   const words = Array.from(savedWords, ([name, value]) => ({ name, value }));
+  // Calculate the sum of inverse weights
   const totalInverseWeight = words.reduce(
     (sum, item) => sum + 1 / item.value,
     0,
@@ -82,33 +40,6 @@ const invertedWeightedRandom = () => {
   console.error("something went wrong");
   return "";
 };
-
-function selectWeightedRandomWord(): string {
-  // Convert word count map to an array of [word, count] pairs
-  const wordCountArray = Object.entries(savedWords);
-
-  // Calculate the maximum count
-  const maxCount = Math.max(...wordCountArray.map(([, count]) => count));
-
-  // Calculate the total "inverse" count, where each word's inverse count is (maxCount - count + 1)
-  const totalInverseCount = wordCountArray.reduce(
-    (acc, [, count]) => acc + (maxCount - count + 1),
-    0,
-  );
-
-  // Generate a random number between 0 and total inverse count
-  const randomNumber = Math.random() * totalInverseCount;
-
-  // Iterate over word count array and accumulate inverse counts until the random number is reached
-  let cumulativeInverseCount = 0;
-  for (const [word, count] of wordCountArray) {
-    cumulativeInverseCount += maxCount - count + 1;
-    if (randomNumber < cumulativeInverseCount) {
-      return word; // Return the word when the cumulative inverse count exceeds the random number
-    }
-  }
-  return "";
-}
 
 // Function to speak the word using Text-to-Speech
 function speakWord() {
@@ -159,8 +90,6 @@ function initSubmitButton() {
     if (success) {
       savedWords.set(inputWord, 15);
       saveWordsToLocalStorage();
-      // savedWords[inputWord] = (savedWords[inputWord] || 0) + 5;
-      // saveWordCountToCookie(savedWords);
       revealWord();
       displaySuccessIcon();
     } else {
@@ -179,7 +108,7 @@ function initRevealButton() {
 // Function to refresh and select a new random word
 function refreshWord() {
   // Select a new random word
-  selectedWord = invertedWeightedRandom();
+  selectedWord = selectWeightedRandomWord();
 
   // Reset all fields
   (document.getElementById("wordInput") as HTMLInputElement).value = ""; // Clear input field
@@ -196,9 +125,8 @@ function refreshWord() {
 // Function to initialize the refresh button
 function initRefreshButton(): void {
   const refreshButton = document.getElementById("refreshButton");
-  if (!refreshButton) return;
 
-  refreshButton.addEventListener("click", () => {
+  refreshButton!.addEventListener("click", () => {
     refreshWord();
     speakWord();
   });
@@ -219,7 +147,6 @@ const saveWordsToLocalStorage = () => {
 
 async function init(): Promise<void> {
   try {
-    // const words = await fetchWordsFromFile();
     const words = getWordsFromLocalStorage();
 
     if (!words) {
@@ -227,17 +154,11 @@ async function init(): Promise<void> {
     } else {
       savedWords = words;
     }
-    // savedWords = readWordCountFromCookie();
-    console.log("savedWords", savedWords);
+    console.log("initial words", savedWords);
 
     saveWordsToLocalStorage();
-    // if (Object.keys(savedWords).length == 0) {
-    //   words.forEach((word) => (savedWords[word] = 0));
-    //   saveWordCountToCookie(savedWords);
-    // }
 
-    // selectedWord = selectWeightedRandomWord();
-    selectedWord = invertedWeightedRandom();
+    selectedWord = selectWeightedRandomWord();
     console.log(selectedWord);
 
     initPlayButton();
