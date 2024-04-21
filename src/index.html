@@ -1,42 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Word Checker</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <!-- Button to listen to the word -->
-        <button class="button full-width" id="playButton">Listen</button>
+      <!-- Button to listen to the word -->
+      <button class="button full-width" id="playButton">Listen</button>
     </div>
 
     <div class="container input-container" id="inputContainer">
-        <!-- Input field to enter a word for checking -->
-        <input type="password" id="wordInput" class="input-field full-width" 
-        spellcheck="false" autocorrect="off" autocomplete="off"
-            placeholder="Enter the word">
-        <!-- Icon to display the result of word checking -->
-        <span class="icon" id="resultIcon"></span>
-        <div class="button-container">
-            <button class="button half-width" id="checkButton">Check</button>
-            <button class="button  half-width" id="revealButton">Reveal</button>
-        </div>
+      <!-- Input field to enter a word for checking -->
+      <input
+        type="password"
+        id="wordInput"
+        class="input-field full-width"
+        spellcheck="false"
+        autocorrect="off"
+        autocomplete="off"
+        placeholder="Enter the word"
+      />
+      <!-- Icon to display the result of word checking -->
+      <span class="icon" id="resultIcon"></span>
+      <div class="button-container">
+        <button class="button half-width" id="checkButton">Check</button>
+        <button class="button half-width" id="revealButton">Reveal</button>
+      </div>
     </div>
 
     <div id="revealedWordContainer" class="container">
-        <p id="revealedWord"></p>
+      <p id="revealedWord"></p>
     </div>
 
     <div class="container">
-        <!-- Button to refresh the page -->
-        <button class="button full-width" id="refreshButton">New word</button>
+      <!-- Button to refresh the page -->
+      <button class="button full-width" id="refreshButton">New word</button>
     </div>
 
     <script type="module" src="script.ts"></script>
-</body>
-
+  </body>
 </html>
