@@ -4,7 +4,7 @@
   "description": "Spell checking of the Year 5 and Year 6 spelling list for the National Curriculum in England",
   "private": true,
   "scripts": {
-    "start": "npx parcel index.html",
+    "start": "npx parcel src/index.html",
     "build": "npx parcel build index.html",
     "build:tsc": "tsc"
   },
