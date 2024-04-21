@@ -1,0 +1,17 @@
+{
+  "name": "spelling_bee",
+  "version": "1.0.0",
+  "description": "Spell checking of the Year 5 and Year 6 spelling list for the National Curriculum in England",
+  "private": true,
+  "scripts": {
+    "start": "npx parcel index.html",
+    "build": "npx parcel build index.html",
+    "build:tsc": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.19.31",
+    "parcel": "^2.12.0"
+  }
+}

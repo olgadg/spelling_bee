@@ -12,7 +12,7 @@ async function fetchWordsFromFile(): Promise<string[]> {
     }
     const text = await response.text(); // Get the file content as text
     const wordlist = text.split('\n').map(word => word.trim()); // Split content by new lines and trim whitespace
-    console.log(wordlist)
+    console.log("wordlist", wordlist);
     return wordlist
   } catch (error) {
     console.error('Error fetching words:', error);
@@ -150,7 +150,8 @@ async function init(): Promise<void> {
   try {
     const words = await fetchWordsFromFile();
     savedWords = readWordCountFromCookie();
-    console.log(savedWords)
+    console.log("savedWords", savedWords)
+
     if(Object.keys(savedWords).length == 0) {
       words.forEach(word => savedWords[word] = 0)
       saveWordCountToCookie(savedWords)
