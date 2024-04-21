@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npx parcel src/index.html",
     "build": "npx parcel build index.html",
-    "build:tsc": "tsc"
+    "build:tsc": "tsc",
+    "prettify": "npx prettier src --write"
   },
   "author": "",
   "license": "ISC",
