@@ -140,8 +140,11 @@ function refreshWord() {
 // Function to initialize the refresh button
 function initRefreshButton(): void {
   const refreshButton = document.getElementById('refreshButton');
-  refreshButton!.addEventListener('click', () => {
+  if (!refreshButton) return
+
+  refreshButton.addEventListener('click', () => {
     refreshWord();
+    speakWord();
   });
 }
 
